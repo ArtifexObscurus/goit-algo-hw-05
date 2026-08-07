@@ -1,6 +1,7 @@
 from datetime import datetime
 from collections import Counter
 from colorama import Fore, Style, init
+import sys
 
 # Initialize colorama for cross-platform output.
 init(autoreset=True)
@@ -96,6 +97,64 @@ def count_logs_by_level(logs: list[dict[str, str]]) -> dict[str, int]:
     dict[str, int]
         A dictionary with the number of log records for each level.
     """
-    levels = [log["level"] for log in logs]
-    return dict(Counter(levels))
+    return dict(Counter(log["level"] for log in logs))
     
+def display_log_counts(counts: dict[str, int]) -> None:
+    """
+    Display log count in a formatted table
+
+    Parameters
+    ----------
+    counts : dict[str, int]
+        A dictionary containing the number of log records for each level.
+    """
+    header_level = "Log level"
+    header_count = "Count"
+
+    # Determine the width of the first column based on the header and log levels.
+    level_width = max(len(header_level), *(len(level) for level in counts))
+
+    lines = [
+        f"{header_level:<{level_width}} | {header_count}",
+        f"{'-' * level_width}-|-{'-' * len(header_count)}",
+    ]
+
+    colors = {
+        "ERROR": Fore.RED,
+        "INFO": Fore.BLUE,
+        "WARNING": Fore.YELLOW,
+    }
+
+    for level, count in counts.items():
+        color = colors.get(level, "")
+        lines.append(f"{color}{level:<{level_width}} | {count}{Style.RESET_ALL}")
+
+    print("\n".join(lines))
+
+def main() -> None:
+    """Run the log analysis program."""
+    if len(sys.argv) < 2:
+        print("Usage: python main.py <log_file> [log_level]")
+        return
+
+    file_path = sys.argv[1]
+    level = sys.argv[2] if len(sys.argv) > 2 else None
+
+    logs = load_logs(file_path)
+
+    if not logs:
+        return
+
+    counts = count_logs_by_level(logs)
+    display_log_counts(counts)
+
+    if level:
+        filtered_logs = filter_logs_by_level(logs, level)
+
+        print(f"\nLogs details for level '{level.upper()}':")
+
+        for log in filtered_logs:
+            print(f"{log['date']} {log['time']} - {log["message"]}")
+
+if __name__ == "__main__":
+    main()
