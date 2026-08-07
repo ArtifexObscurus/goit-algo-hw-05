@@ -1,7 +1,7 @@
-from datetime import datetime
 from collections import Counter
-from colorama import Fore, Style, init
 import sys
+
+from colorama import Fore, init
 
 # Initialize colorama for cross-platform output.
 init(autoreset=True)
@@ -101,7 +101,7 @@ def count_logs_by_level(logs: list[dict[str, str]]) -> dict[str, int]:
     
 def display_log_counts(counts: dict[str, int]) -> None:
     """
-    Display log count in a formatted table
+    Display log counts in a formatted table
 
     Parameters
     ----------
@@ -127,7 +127,7 @@ def display_log_counts(counts: dict[str, int]) -> None:
 
     for level, count in counts.items():
         color = colors.get(level, "")
-        lines.append(f"{color}{level:<{level_width}} | {count}{Style.RESET_ALL}")
+        lines.append(f"{color}{level:<{level_width}} | {count}")
 
     print("\n".join(lines))
 
@@ -154,7 +154,7 @@ def main() -> None:
         print(f"\nLogs details for level '{level.upper()}':")
 
         for log in filtered_logs:
-            print(f"{log['date']} {log['time']} - {log["message"]}")
+            print(f"{log['date']} {log['time']} - {log['message']}")
 
 if __name__ == "__main__":
     main()
