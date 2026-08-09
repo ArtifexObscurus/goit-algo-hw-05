@@ -120,6 +120,10 @@ def main() -> None:
     while True:
         user_input = input("Enter a command: ")
 
+        # Skip empty input
+        if not user_input.strip():
+            continue
+
         command, args = parse_input(user_input)
 
         match command:
