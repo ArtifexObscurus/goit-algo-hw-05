@@ -15,7 +15,7 @@ def generator_numbers(text: str) -> Generator[float, None, None]:
     float
         Next number extracted from the text.
     """
-    pattern = r"\d+\.\d+"
+    pattern = r" \d+\.\d+ "
 
     # Yield each number found in the text.
     for match in re.finditer(pattern, text):
